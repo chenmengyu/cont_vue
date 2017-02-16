@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="dist/bootstrap/css/bootstrap.css" />
+		<title>报名系统</title>
+	</head>
+	<body>
+		<div class="container" id="app">
+			<!--导航-->
+			<nav class="navbar navbar-default">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<a href="index.html" class="navbar-brand">报名系统</a>
+					</div>
+					<div class="collapse navbar-collapse">
+						<ul class="nav navbar-nav navbar-right">
+							<li><a href="#">用户：<span>{{name}}</span></a></li>
+							<li><a href="#">角色：<span>{{role}}</span></a></li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+			<!--导航结束-->
+			
+			<!--主体-->
+			<div class="row" v-if="role=='管理员'">
+				<!--左侧菜单-->
+				<div class="col-sm-3" id="left">
+					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+					  <div class="panel panel-default">
+					    <div class="panel-heading" role="tab" id="thManager">
+					      <h4 class="panel-title">
+					        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#teacher" aria-expanded="true" aria-controls="collapseOne">
+					          	教师管理
+					        </a>
+					      </h4>
+					    </div>
+					    <div id="teacher" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="thManager">
+					      <div class="panel-body">
+					      	<ul class="nav">
+					      		<li><a href="#teacherAdd" class="btn" :class="{'btn-info':tree.add}" @click="setTree('add')">教师添加</a></li>
+					      		<li><a href="#teacherList" class="btn" :class="{'btn-info':tree.list}" @click="setTree('list')">教师查询</a></li>
+					      	</ul>
+					      </div>
+					    </div>
+					  </div>
+					  <div class="panel panel-default">
+					    <div class="panel-heading" role="tab" id="courseManage">
+					      <h4 class="panel-title">
+					        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#course" aria-expanded="false" aria-controls="collapseTwo">
+					          	课程管理
+					        </a>
+					      </h4>
+					    </div>
+					    <div id="course" class="panel-collapse collapse" role="tabpanel" aria-labelledby="courseManage">
+					      <div class="panel-body">
+					      	<ul class="nav">
+					      		<li><a href="#">学段管理</a></li>
+					      		<li><a href="#">学科管理</a></li>
+					      	</ul>
+					      </div>
+					    </div>
+					  </div>
+					  <div class="panel panel-default">
+					    <div class="panel-heading" role="tab" id="resultManage">
+					      <h4 class="panel-title">
+					        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#result" aria-expanded="false" aria-controls="collapseThree">
+					          	报名管理
+					        </a>
+					      </h4>
+					    </div>
+					    <div id="result" class="panel-collapse collapse" role="tabpanel" aria-labelledby="resultManage">
+					      <div class="panel-body">
+					      	<ul class="nav">
+					      		<li><a href="#">报名查询</a></li>
+					      	</ul>
+					      </div>
+					    </div>
+					  </div>
+					  <div class="panel panel-default">
+					    <div class="panel-heading" role="tab" id="settingManage">
+					      <h4 class="panel-title">
+					        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#setting" aria-expanded="false" aria-controls="collapseThree">
+					          	系统设置
+					        </a>
+					      </h4>
+					    </div>
+					    <div id="setting" class="panel-collapse collapse" role="tabpanel" aria-labelledby="settingManage">
+					      <div class="panel-body">
+					      	<ul class="nav">
+					      		<li><a href="#">个人信息</a></li>
+					      		<li><a href="#">退出系统</a></li>
+					      	</ul>
+					      </div>
+					    </div>
+					  </div>
+					</div>
+
+				</div>
+				<!--左侧菜单结束-->
+				
+				<!--右侧内容-->
+				<div class="col-sm-9">
+					<admin-teacher-add v-show="tree.add" :teacher-columns='columns' :item="item"></admin-teacher-add>
+					<admin-teacher-list v-show="tree.list" :t-list-columns="columns" :teachers="teacherData"></admin-teacher-list>
+				</div>
+				<!--右侧内容结束-->
+				
+			</div>
+			<!--主体结束-->
+		</div>
+		
+		<!--教师添加-->
+		<template class="col-sm-12" id="teacherAdd">
+			<div class="col-sm-8">
+				<div class="panel panel-primary">
+					<div class="panel-heading"><h3>教师添加</h3></div>
+					<div class="panel-body">
+						<form class="form-horizontal" id="addForm">
+							<div class="form-group" v-for="col in teacherColumns" v-if="col.name != 'id'">
+								<div class="col-sm-3 text-right">
+									<label class="control-label">{{col.colName}}</label>
+								</div>
+								<div class="col-sm-9">
+									<select v-if="col.dataSource" :name="col.name" class="form-control" v-model="item[col.name]">
+										<option v-for="opt in col.dataSource" :value="opt">{{opt}}</option>
+									</select>
+									<input v-else type="text" class="form-control" :name="col.name" v-model="item[col.name]"/>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="panel-footer">
+						<button type="button" class="btn btn-default" @click="saveTeacher">保存</button>
+						<button type="button" class="btn btn-default" @click='clearForm'>重置</button>
+					</div>
+				</div>
+			</div>
+		</template>
+		<!--教师添加结束-->
+		
+		<template id="teacherList">
+			<div class="table-responsive">
+				<h3>教师查询</h3>
+				<div class="form-group">
+					<label for="search">Search</label>
+					<input type="text" v-model="searchKey"/><br />
+					<button type="button" class="btn btn-sm btn-info" @click="openTeacherAdd">添加</button>
+				</div>
+				<table class="table table-bordered table-striped table-hover">
+					<thead>
+						<tr>
+							<th v-for="col in tListColumns">{{col.colName}}</th>
+							<th>删除</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(index,teacher) in teachers | filterBy searchKey">
+							<td v-for="col in tListColumns">{{teacher[col.name]}}</td>
+							<td class="text-center">
+								<button type="button" class="btn btn-sm btn-danger" @click="deleteTeacher(index)">删除</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</template>
+		
+		
+		
+		
+		
+		
+		
+		
+	</body>
+	<script src="dist/jquery.js"></script>
+	<script src="dist/bootstrap/js/bootstrap.js"></script>
+	<script src="dist/vue/vue.js"></script>
+	<script src="dist/vue/vue-resource.js"></script>
+	<script src="lib/js/common.js"></script>
+	<script src="lib/js/content.js"></script>
+</html>

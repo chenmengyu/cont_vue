@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>用户登录</title>
+		<link rel="stylesheet" type="text/css" href="dist/bootstrap/css/bootstrap.css"/>
+		<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+		<style type="text/css">
+			.container{
+				background-image: url(lib/images/login.gif);
+				min-height: 600px;
+			}
+			form{
+				width:25%;
+				margin: 17% 40%;
+			}
+			.form-horizontal .has-feedback .form-control-feedback{
+				left:-5px;
+				opacity: .5;
+			}
+			input.form-control{
+				padding-left: 30px;
+			}
+			form input{
+				margin-bottom: 10px;
+			}
+		</style>
+	</head>
+	
+	<body>
+		<div class="container">
+			<form class="form-horizontal">
+				<h3 class="text-primary">用户登录</h3>
+				<div class="form-group has-feedback">
+					<label for="uname" class="sr-only">用户名：</label>
+					<input type="text" class="form-control input-lg" id="uname" name="uname" required/>
+					<span class="glyphicon glyphicon-user form-control-feedback"></span>
+				</div>
+				<div class="form-group has-feedback">
+					<label for="uname" class="sr-only">密码：</label>
+					<input type="password" class="form-control input-lg" id="upwd" name="upwd" required />
+					<span class="glyphicon glyphicon-lock form-control-feedback"></span>
+				</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<button type="button" class="btn btn-success btn-block" id="btn">登录</button>
+					</div>
+					<div class="col-sm-6">
+						<select name="role" id="role" class="form-control">
+							<option value="1">管理员</option>
+							<option value="2">教师</option>
+						</select>
+					</div>
+				</div>
+			</form>
+		</div>
+	</body>
+	
+	<script src="lib/js/common.js"></script>
+	<script>
+		
+		
+		
+		$("#btn").click(formButton);
+		
+		$('body').keydown(function(){
+			if(event.keyCode == '13'){
+				formButton();
+			}
+		});
+		
+		function formButton(){
+			if($('#uname').val()=='' || $('#upwd').val()==' '){return;}
+			$.get('lib/php/login.php',$('form').serialize(),function(data){
+				/*console.log(data)*/
+				if('data' == 'no'){
+					alert('用户名或密码输入错误或角色不匹配！');
+				}else{
+					addCookie('uname',$('#uname').val());
+					addCookie('upwd',$('#upwd').val());
+					addCookie('role',$('#role').val());
+					location.href = "index.html";
+				}
+			})
+		}
+		 
+		/*console.log("uname="+getCookie('uname'))
+		console.log("upwd="+getCookie('upwd'))
+		console.log("role="+getCookie('role'))
+		console.log(document.cookie)*/
+	</script>
+</html>
