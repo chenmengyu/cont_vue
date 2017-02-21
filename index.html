@@ -39,8 +39,8 @@
 					    <div id="teacher" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="thManager">
 					      <div class="panel-body">
 					      	<ul class="nav">
-					      		<li><a href="#teacherAdd" class="btn" :class="{'btn-info':tree.add}" @click="setTree('add')">教师添加</a></li>
-					      		<li><a href="#teacherList" class="btn" :class="{'btn-info':tree.list}" @click="setTree('list')">教师查询</a></li>
+					      		<li><a href="javascript:void(0)" class="btn" :class="{'btn-info':tree.add}" @click="setTree('add')">教师添加</a></li>
+					      		<li><a href="javascript:void(0)" class="btn" :class="{'btn-info':tree.list}" @click="setTree('list')">教师查询</a></li>
 					      	</ul>
 					      </div>
 					    </div>
@@ -102,7 +102,7 @@
 				
 				<!--右侧内容-->
 				<div class="col-sm-9">
-					<admin-teacher-add v-show="tree.add" :teacher-columns='columns' :item="item"></admin-teacher-add>
+					<admin-teacher-add v-show="tree.add" :teacher-columns='columns' :item='item' :mode="mode"></admin-teacher-add>
 					<admin-teacher-list v-show="tree.list" :t-list-columns="columns" :teachers="teacherData"></admin-teacher-list>
 				</div>
 				<!--右侧内容结束-->
@@ -123,10 +123,10 @@
 									<label class="control-label">{{col.colName}}</label>
 								</div>
 								<div class="col-sm-9">
-									<select v-if="col.dataSource" :name="col.name" class="form-control" v-model="item[col.name]">
+									<select v-if="col.dataSource" :name="col.name" class="form-control" v-model="item[col.name]" :disabled="mode==2 && col.isKey">
 										<option v-for="opt in col.dataSource" :value="opt">{{opt}}</option>
 									</select>
-									<input v-else type="text" class="form-control" :name="col.name" v-model="item[col.name]"/>
+									<input v-else type="text" class="form-control" :name="col.name" v-model="item[col.name]" :disabled="mode==2 && col.isKey"/>
 								</div>
 							</div>
 						</form>
@@ -140,13 +140,14 @@
 		</template>
 		<!--教师添加结束-->
 		
+		<!--教师查询-->
 		<template id="teacherList">
 			<div class="table-responsive">
 				<h3>教师查询</h3>
 				<div class="form-group">
 					<label for="search">Search</label>
 					<input type="text" v-model="searchKey"/><br />
-					<button type="button" class="btn btn-sm btn-info" @click="openTeacherAdd">添加</button>
+					<button type="button" class="btn btn-sm btn-info" @click="openTeacherAdd(1)">添加</button>
 				</div>
 				<table class="table table-bordered table-striped table-hover">
 					<thead>
@@ -157,7 +158,10 @@
 					</thead>
 					<tbody>
 						<tr v-for="(index,teacher) in teachers | filterBy searchKey">
-							<td v-for="col in tListColumns">{{teacher[col.name]}}</td>
+							<td v-for="col in tListColumns">
+								<span v-if="col.isKey"><a href="javascript:void(0)" @click="openTeacherAdd(2,index)">{{teacher[col.name]}}</a></span>
+								<span v-else>{{teacher[col.name]}}</span>
+							</td>
 							<td class="text-center">
 								<button type="button" class="btn btn-sm btn-danger" @click="deleteTeacher(index)">删除</button>
 							</td>
@@ -166,6 +170,7 @@
 				</table>
 			</div>
 		</template>
+		<!--教师查询结束-->
 		
 		
 		
